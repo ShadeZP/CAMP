@@ -1,10 +1,12 @@
+import { CustomAttribute, MagentoProduct, MagentoProductResponse } from './models/Magento-product.model';
+import { AttributeObject, Product, ProductResponse, Variant } from './models/Product.model';
 import { getProducts as getProductsRepo } from './products.repository';
 
-function findProduct(id, list) {
-  return list.find((product) => product.id === id);
+function findProduct(id: number, list: MagentoProduct[]): MagentoProduct {
+  return list.find((product) => product.id === id)!;
 }
 
-function convertResponse(res) {
+function convertResponse(res: MagentoProductResponse): ProductResponse {
   return {
     results: res.items
       .filter(item => item.product_links.length)
@@ -16,7 +18,7 @@ function convertResponse(res) {
   };
 }
 
-function createAttrObj(custom_attributes) {
+function createAttrObj(custom_attributes: CustomAttribute[]): AttributeObject {
   return custom_attributes.reduce((acc, cur) => ({
     ...acc,
     [cur.attribute_code]: cur.value,
@@ -27,7 +29,7 @@ function imageMap(gallery) {
   return gallery.map((entry) => ({ url: `https://magento.test/pub/media/catalog/product${entry.file}` }));
 }
 
-function convertProduct(id, items) {
+function convertProduct(id: number, items: MagentoProduct[]): Product {
   const product = findProduct(id, items);
   const attributes = createAttrObj(product.custom_attributes);
   const variants = product.extension_attributes.configurable_product_links?.map((id) => createVariant(findProduct(id, items))) || [];
@@ -38,11 +40,11 @@ function convertProduct(id, items) {
     description: attributes.description,
     slug: attributes.url_key,
     variants: variants,
-    master_variant: variants[0],
+    masterVariant: variants[0],
   };
 }
 
-function createVariant(product) {
+function createVariant(product: MagentoProduct): Variant {
   const attributes = createAttrObj(product.custom_attributes);
   const [, sizeLabel, colorLabel] = product.sku.split('-');
 
@@ -81,7 +83,7 @@ export const getProducts = async ({ categoryId, offset, limit }: {
   categoryId: string,
   offset: string,
   limit: string
-}) => {
+}): Promise<ProductResponse> => {
   const res = await getProductsRepo({ categoryId, offset, limit });
   return convertResponse(res);
 };

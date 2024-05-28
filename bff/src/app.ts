@@ -21,11 +21,6 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/api/v1/categories', categoriesRouter);
 app.use('/api/v1/products', productsRouter);
 
-// catch 404 and forward to error handler
-app.use(function(req, res, next) {
-  next(createError(404));
-});
-
 // error handler
 app.use(function(err: Error, req: Request, res: Response, next: NextFunction) {
   // set locals, only providing error in development
