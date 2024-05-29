@@ -61,16 +61,16 @@ export interface BundleProductOption {
 }
 
 export interface BundleProductLink {
-  id: null;
-  sku: null;
-  option_id: null;
-  qty: null;
-  position: null;
-  is_default: null;
-  price: null;
-  price_type: null;
-  can_change_quantity: null;
-  extension_attributes: null;
+  id: string;
+  sku: string;
+  option_id: number;
+  qty: number;
+  position: number;
+  is_default: boolean;
+  price: number;
+  price_type: number;
+  can_change_quantity: number;
+  extension_attributes: any;
 }
 
 export interface StockItem {
@@ -158,8 +158,8 @@ export interface ConfigurableProductOption {
 }
 
 export interface ConfigurableProductOptionValue {
-  value_index: null;
-  extension_attributes: null;
+  value_index: number;
+  extension_attributes: any;
 }
 
 export interface ProductLink {

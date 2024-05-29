@@ -1,6 +1,6 @@
 import { getCategories as getCategoriesRepo } from './categories.repository';
-import { Ancestor, Category, Parent } from './models/Category';
-import { MagentoCategory } from './models/Magento-category';
+import { Ancestor, Category, Parent } from '../../models/Category';
+import { MagentoCategory } from '../../models/Magento-category';
 
 function flattenData(data: MagentoCategory, parent: Parent | null = null, ancestors: Ancestor[] = []): Category[] {
 

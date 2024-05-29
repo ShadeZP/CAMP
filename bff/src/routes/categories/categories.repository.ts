@@ -1,6 +1,6 @@
 import axios from 'axios';
 import https from 'https';
-import { MagentoCategory } from './models/Magento-category';
+import { MagentoCategory } from '../../models/Magento-category';
 
 const instance = axios.create({
   httpsAgent: new https.Agent({
