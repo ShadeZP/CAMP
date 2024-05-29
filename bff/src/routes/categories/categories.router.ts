@@ -1,5 +1,5 @@
 import { getCategories } from './categories.service';
-import { Category } from './models/Category';
+import { Category } from '../../models/Category';
 import express, { Request, Response, Router } from 'express';
 
 const router: Router = express.Router();

@@ -6,7 +6,8 @@ const cors = require('cors');
 
 import express, { Express, Request, Response, NextFunction } from "express";
 import categoriesRouter from './routes/categories/categories.router'
-import productsRouter from './routes/products/products.router'
+import productRouter from './routes/product/product.router';
+import productsRouter from './routes/product/product.router'
 
 const app: Express  = express();
 const port = 3003;
@@ -20,9 +21,10 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/api/v1/categories', categoriesRouter);
 app.use('/api/v1/products', productsRouter);
+// app.use('/api/v1/products/:id', productRouter);
 
 // error handler
-app.use(function(err: Error, req: Request, res: Response, next: NextFunction) {
+app.use(function(err: Error, req: Request, res: Response, next: NextFunction): void {
   // set locals, only providing error in development
   res.locals.message = err.message;
   res.locals.error = req.app.get('env') === 'development' ? err : {};
