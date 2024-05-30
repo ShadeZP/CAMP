@@ -5,8 +5,8 @@ const logger = require('morgan');
 const cors = require('cors');
 
 import express, { Express, Request, Response, NextFunction } from "express";
+import cartRouter from './routes/cart/cart.router';
 import categoriesRouter from './routes/categories/categories.router'
-import productRouter from './routes/product/product.router';
 import productsRouter from './routes/product/product.router'
 
 const app: Express  = express();
@@ -21,7 +21,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/api/v1/categories', categoriesRouter);
 app.use('/api/v1/products', productsRouter);
-// app.use('/api/v1/products/:id', productRouter);
+app.use('/api/v1/carts', cartRouter);
 
 // error handler
 app.use(function(err: Error, req: Request, res: Response, next: NextFunction): void {

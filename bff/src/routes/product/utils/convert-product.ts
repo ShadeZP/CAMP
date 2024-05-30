@@ -4,7 +4,7 @@ import {
   MagentoProductResponse,
   MediaGalleryEntry,
 } from '../../../models/Magento-product.model';
-import { AttributeObject, Image, Product, ProductResponse, Variant } from '../../../models/Product.model';
+import { AttributeObject, Image, Product, ProductResponse, ProductVariant } from '../../../models/Product.model';
 
 export function findProduct(id: number, list: MagentoProduct[]): MagentoProduct {
   return list.find((product) => product.id === id)!;
@@ -48,7 +48,7 @@ export function convertProduct(product: MagentoProduct, items: MagentoProduct[] 
   };
 }
 
-export function createVariant(product: MagentoProduct): Variant {
+export function createVariant(product: MagentoProduct): ProductVariant {
   const attributes = createAttrObj(product.custom_attributes);
   const [, sizeLabel, colorLabel] = product.sku.split('-');
 
