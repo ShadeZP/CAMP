@@ -10,18 +10,24 @@ export interface Product {
   name: string;
   description: string;
   slug: string;
-  variants: Variant[];
-  masterVariant: Variant;
+  variants: ProductVariant[];
+  masterVariant: ProductVariant;
 }
 
-export interface Variant {
+export interface ProductVariantAvailability {
+  isOnStock?: boolean;
+  availableQty?: number;
+}
+
+export interface ProductVariant {
   id: number;
   sku: string;
-  prices: Price[];
-  images: Image[];
-  attributes: Attribute[];
-  slug: string;
   name: string;
+  slug: string;
+  images: Image[];
+  prices: Price[];
+  attributes: ProductAttribute[];
+  availability?: ProductVariantAvailability;
 }
 
 export interface Price {
@@ -35,7 +41,7 @@ export interface Image {
   url: string;
 }
 
-export interface Attribute {
+export interface ProductAttribute {
   name: string;
   value: {
     key:string;
