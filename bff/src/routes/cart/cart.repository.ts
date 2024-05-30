@@ -1,7 +1,7 @@
 import axios from 'axios';
 import https from 'https';
-import { UpdateProductInCartPayload } from '../../models/Cart.model';
-import { MagentoAddProductInCart, MagentoAddProductToCartPayload, MagentoCart } from '../../models/Magento-cart';
+import { AddProductToCartPayload } from '../../models/Cart.model';
+import { MagentoProductInCart, MagentoUpdateProductsInCartPayload, MagentoCart } from '../../models/Magento-cart';
 import { covertAddToCartPayload } from './utils/convert-cart';
 
 const instance = axios.create({
@@ -21,10 +21,9 @@ export const createGuestCart = async (): Promise<string> => {
   }
 };
 
-export const getCarById = async (cartId: string): Promise<MagentoCart> => {
+export const getCartById = async (cartId: string): Promise<MagentoCart> => {
   try {
     const response = await instance.get(`https://magento.test/rest/default/V1/guest-carts/${cartId}`);
-    console.log(response.data)
     return response.data;
   } catch (err) {
     console.error(err);
@@ -32,7 +31,7 @@ export const getCarById = async (cartId: string): Promise<MagentoCart> => {
   }
 };
 
-export const getCartItems = async (cartId: string) => {
+export const getCartItems = async (cartId: string): Promise<MagentoProductInCart[]> => {
   try {
     const response = await instance.get(`https://magento.test/rest/default/V1/guest-carts/${cartId}/items`);
     return response.data;
@@ -42,12 +41,32 @@ export const getCartItems = async (cartId: string) => {
   }
 }
 
-export const addProductToCart = async (body: MagentoAddProductToCartPayload, cartId: string): Promise<MagentoCart> => {
+export const addProductToCart = async (body: MagentoUpdateProductsInCartPayload, cartId: string): Promise<MagentoProductInCart> => {
   try {
     const response = await instance.post(`https://magento.test/rest/default/V1/guest-carts/${cartId}/items`, body);
     return response.data;
   } catch (err) {
-    // console.error(err);
+    console.error(err);
+    throw err;
+  }
+};
+
+export const updateProductQuantity = async (body: MagentoUpdateProductsInCartPayload, cartId: string): Promise<MagentoProductInCart> => {
+  try {
+    const response = await instance.put(`https://magento.test/rest/default/V1/guest-carts/${cartId}/items/${body.cartItem.item_id}`, body);
+    return response.data;
+  } catch (err) {
+    console.error(err);
+    throw err;
+  }
+};
+
+export const removeProductFromCart = async (item_id: number, cartId: string): Promise<boolean> => {
+  try {
+    const response = await instance.delete(`https://magento.test/rest/default/V1/guest-carts/${cartId}/items/${item_id}`);
+    return response.data;
+  } catch (err) {
+    console.error(err);
     throw err;
   }
 };

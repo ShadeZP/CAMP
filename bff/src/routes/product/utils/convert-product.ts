@@ -34,8 +34,6 @@ export function convertProduct(product: MagentoProduct, items: MagentoProduct[] 
   const attributes = createAttrObj(product.custom_attributes);
   const variants = product.extension_attributes.configurable_product_links?.map((id) => createVariant(findProduct(id, items))) || [];
   const masterVariant = masterSCU ? variants.find((product) => {
-    console.log(product.sku)
-    console.log(masterSCU)
     return product.sku === masterSCU;
   })! : variants[0]
   return {

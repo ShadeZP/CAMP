@@ -32,7 +32,7 @@ export type CartsIdPutRequestUpdateAction =
   | 'Recalculate'
   | 'RemoveLineItem'
 
-export interface UpdateProductInCartPayload {
+export interface AddProductToCartPayload {
   version: number,
   action: CartsIdPutRequestUpdateAction,
   AddLineItem: {
@@ -41,3 +41,20 @@ export interface UpdateProductInCartPayload {
   }
 }
 
+export interface UpdateQuantityPayload {
+  version: number,
+  action: CartsIdPutRequestUpdateAction,
+  ChangeLineItemQuantity: {
+    lineItemId: number,
+    quantity: number
+  }
+}
+
+export interface RemoveProductFromCartPayload {
+  version: number,
+  action: CartsIdPutRequestUpdateAction,
+  RemoveLineItem: {
+    lineItemId: number,
+    quantity: number
+  }
+}

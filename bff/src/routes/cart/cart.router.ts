@@ -1,6 +1,17 @@
 import express, { Request, Response, Router } from 'express';
-import { Cart, UpdateProductInCartPayload } from '../../models/Cart.model';
-import { addProductToCart, createGuestCart, getCartById } from './cart.service';
+import {
+  Cart,
+  AddProductToCartPayload,
+  UpdateQuantityPayload,
+  RemoveProductFromCartPayload,
+} from '../../models/Cart.model';
+import {
+  addProductToCart,
+  createGuestCart,
+  getCartById,
+  removeProductFromCart,
+  updateProductQuantity,
+} from './cart.service';
 
 const router: Router = express.Router();
 
@@ -18,9 +29,19 @@ router.get('/:id', async function (req: Request, res: Response) {
 
 router.put('/:id', async function (req: Request, res: Response) {
   const cartId = req.params.id;
-  const payload: UpdateProductInCartPayload = req.body;
+  const payload: AddProductToCartPayload | UpdateQuantityPayload | RemoveProductFromCartPayload = req.body;
+  let data = null;
+  switch (payload.action) {
+    case 'AddLineItem':
+      data = await addProductToCart(payload as AddProductToCartPayload, cartId)
+      break;
+    case 'ChangeLineItemQuantity':
+      data = await updateProductQuantity(payload as UpdateQuantityPayload, cartId)
+      break;
+    case 'RemoveLineItem':
+      data = await removeProductFromCart(payload as RemoveProductFromCartPayload, cartId)
+  }
 
-  const data = await addProductToCart(payload, cartId);
 
   res.send(data);
 })

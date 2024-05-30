@@ -1,7 +1,11 @@
-import { Cart, CartLineItemsInner, CartTotalPrice, UpdateProductInCartPayload } from '../../../models/Cart.model';
-import { MagentoAddProductInCart, MagentoAddProductToCartPayload, MagentoCart } from '../../../models/Magento-cart';
+import {
+  Cart,
+  CartLineItemsInner,
+  AddProductToCartPayload,
+  UpdateQuantityPayload, RemoveProductFromCartPayload,
+} from '../../../models/Cart.model';
+import { MagentoUpdateProductsInCartPayload, MagentoCart } from '../../../models/Magento-cart';
 import { MagentoProduct } from '../../../models/Magento-product.model';
-import { ProductVariant } from '../../../models/Product.model';
 import { createVariant } from '../../product/utils/convert-product';
 
 export const convertCart = (id: string): Cart => {
@@ -21,7 +25,8 @@ export const mapCart = (
   magentoCart: MagentoCart,
   token: string,
   magentoProducts: MagentoProduct[],
-  version = 0): Cart => {
+  version = 0,
+): Cart => {
   const lineItems: CartLineItemsInner[] = magentoCart.items.map((item): CartLineItemsInner => ({
     id: item.item_id as number,
     quantity: item.qty,
@@ -44,18 +49,32 @@ export const mapCart = (
   };
 };
 
-export const covertAddToCartPayload = (payload: UpdateProductInCartPayload, product: MagentoProduct, cart: MagentoCart): MagentoAddProductToCartPayload => {
+export const covertAddToCartPayload = (payload: AddProductToCartPayload, cart: MagentoCart): MagentoUpdateProductsInCartPayload => {
   return {
     cartItem: {
-      // item_id: product.id,
-      item_id: null,
-      // name: product.name,
-      price: product.price,
-      product_type: null,
-      // product_type: product.type_id,
       quote_id: cart.id,
       sku: payload.AddLineItem.variantId,
       qty: payload.AddLineItem.quantity,
+    },
+  };
+};
+
+export const convertUpdateQuantityPayload = (payload: UpdateQuantityPayload, cart: MagentoCart): MagentoUpdateProductsInCartPayload => {
+  return {
+    cartItem: {
+      item_id: payload.ChangeLineItemQuantity.lineItemId,
+      quote_id: cart.id,
+      qty: payload.ChangeLineItemQuantity.quantity,
+    },
+  };
+};
+
+export const convertRemoveProductFromCartPayload = (payload: RemoveProductFromCartPayload, cart: MagentoCart): MagentoUpdateProductsInCartPayload => {
+  return {
+    cartItem: {
+      item_id: payload.RemoveLineItem.lineItemId,
+      quote_id: cart.id,
+      qty: payload.RemoveLineItem.quantity,
     },
   };
 };

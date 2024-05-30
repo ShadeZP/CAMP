@@ -6,7 +6,7 @@ export interface MagentoCart {
   updated_at: string;
   is_active: boolean;
   is_virtual: boolean;
-  items: MagentoAddProductInCart[];
+  items: MagentoProductInCart[];
   items_count: number;
   items_qty: number;
   customer: Customer;
@@ -58,18 +58,18 @@ export interface ExtensionAttributes {
   shipping_assignments: any[];
 }
 
-export interface MagentoAddProductToCartPayload {
-  cartItem: MagentoAddProductInCart
+export interface MagentoUpdateProductsInCartPayload {
+  cartItem: MagentoProductInCart;
 }
 
-export interface MagentoAddProductInCart {
-    item_id?: number | null,
-    sku: string,
-    qty: number,
-    name?: string | null,
-    price?: number | null,
-    product_type?: string | null,
-    quote_id: number,
-    product_option?: BundleProductOption[],
-    extension_attributes?: any,
+export interface MagentoProductInCart {
+  item_id?: number | null,
+  sku?: string,
+  qty: number,
+  name?: string | null,
+  price?: number | null,
+  product_type?: string | null,
+  quote_id: number,
+  product_option?: BundleProductOption[],
+  extension_attributes?: any,
 }
