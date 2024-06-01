@@ -2,9 +2,17 @@ import {
   Cart,
   CartLineItemsInner,
   AddProductToCartPayload,
-  UpdateQuantityPayload, RemoveProductFromCartPayload,
+  UpdateQuantityPayload, RemoveProductFromCartPayload, SetShippingAddressPayload,
 } from '../../../models/Cart.model';
-import { MagentoUpdateProductsInCartPayload, MagentoCart } from '../../../models/Magento-cart';
+import {
+  MagentoUpdateProductsInCartPayload,
+  MagentoCart,
+  MagentoAddressInformationPayload,
+  QuoteDataAddressInterface,
+  CheckoutDataShippingInformationInterface,
+  Country,
+  Region,
+} from '../../../models/Magento-cart';
 import { MagentoProduct } from '../../../models/Magento-product.model';
 import { createVariant } from '../../product/utils/convert-product';
 
@@ -78,3 +86,34 @@ export const convertRemoveProductFromCartPayload = (payload: RemoveProductFromCa
     },
   };
 };
+
+export const convertToMagentoAddressInformationPayload = (setShippingAddressPayload: SetShippingAddressPayload, country: Country): MagentoAddressInformationPayload => {
+  const address = setShippingAddressPayload.SetShippingAddress;
+  const region: Region = country.available_regions.find((region) => region.name === address.region)!;
+
+  const magentoAddress: QuoteDataAddressInterface = {
+    city: address.city,
+    country_id: address.country,
+    email: address.email,
+    firstname: address.firstName,
+    lastname: address.lastName,
+    postcode: address.postalCode,
+    region: address.region,
+    street: [address.streetName],
+    telephone: '512-555-1111',
+    region_code: region.code, // Assuming this field is not available in the source, you can add logic to set it if needed
+    region_id: region.id, // Assuming this field is not available in the source, you can add logic to set it if needed
+  };
+
+  const magentoAddressInformation: CheckoutDataShippingInformationInterface = {
+    billing_address: magentoAddress,
+    shipping_address: magentoAddress,
+    shipping_carrier_code: 'flatrate', // Assuming this field is not available in the source, you can add logic to set it if needed
+    shipping_method_code: 'flatrate', // Assuming this field is not available in the source, you can add logic to set it if needed
+  };
+
+  return {
+    addressInformation: magentoAddressInformation,
+  };
+};
+

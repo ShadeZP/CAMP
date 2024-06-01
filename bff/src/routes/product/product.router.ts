@@ -1,22 +1,30 @@
-import express, { Request, Response, Router } from 'express';
+import express, { NextFunction, Request, Response, Router } from 'express';
 import { getProducts, getProduct } from './product.service';
 
 const router: Router = express.Router();
 
-router.get('/', async function (req: Request, res: Response) {
-  const { categoryId, offset, limit } = req.query as { categoryId: string, offset: string, limit: string };
+router.get('/', async function (req: Request, res: Response, next: NextFunction) {
+  try {
+    const { categoryId, offset, limit } = req.query as { categoryId: string, offset: string, limit: string };
 
-  const data = await getProducts({ categoryId, offset, limit });
+    const data = await getProducts({ categoryId, offset, limit });
 
-  res.send(data);
+    res.send(data);
+  } catch (err) {
+    next(err);
+  }
 });
 
-router.get('/:id', async function (req: Request, res: Response) {
-  const id = req.params.id;
+router.get('/:id', async function (req: Request, res: Response, next: NextFunction) {
+  try {
+    const id = req.params.id;
 
-  const data = await getProduct(id);
+    const data = await getProduct(id);
 
-  res.send(data);
+    res.send(data);
+  } catch (err) {
+    next(err);
+  }
 });
 
 export default router;

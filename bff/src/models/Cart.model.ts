@@ -26,11 +26,9 @@ export interface Cart {
   totalQuantity: number;
 }
 
-export type CartsIdPutRequestUpdateAction =
-  | 'AddLineItem'
-  | 'ChangeLineItemQuantity'
-  | 'Recalculate'
-  | 'RemoveLineItem'
+export type CartsIdPutRequestUpdateAction = 'AddLineItem' | 'ChangeLineItemQuantity' | 'Recalculate' | 'RemoveLineItem';
+
+export type OrdersIdPutRequestUpdateAction = 'ChangeOrderState' | 'SetBillingAddress' | 'SetShippingAddress';
 
 export interface AddProductToCartPayload {
   version: number,
@@ -58,3 +56,26 @@ export interface RemoveProductFromCartPayload {
     quantity: number
   }
 }
+
+export interface SetShippingAddressPayload {
+  version: number,
+  action: OrdersIdPutRequestUpdateAction,
+  SetShippingAddress: Address
+}
+
+export interface Address {
+  id: string;
+  country: string;
+  title: string;
+  firstName: string;
+  lastName: string;
+  streetName: string;
+  streetNumber: string;
+  postalCode: string;
+  city: string;
+  region: string;
+  state: string;
+  email: string;
+}
+
+
