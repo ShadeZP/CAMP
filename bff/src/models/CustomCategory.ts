@@ -1,5 +1,5 @@
-export interface Category  {
-  id: number,
+export interface CustomCategory {
+  id: string,
   name: string,
   description: string,
   slug: string,
@@ -9,8 +9,8 @@ export interface Category  {
 
 export interface Ancestor {
   type: string,
-  id: number
+  id: string
 }
 export interface Parent {
-  id: number
+  id: string
 }

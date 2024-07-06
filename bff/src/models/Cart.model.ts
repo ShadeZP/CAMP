@@ -1,4 +1,4 @@
-import { ProductVariant } from './Product.model';
+import { CustomProductVariant } from './Product.model';
 
 export interface MagentoCreateCartResponse {
   id: string;
@@ -11,7 +11,7 @@ export interface CartTotalPrice {
 
 export interface CartLineItemsInner {
   id: number;
-  variant: ProductVariant;
+  variant: CustomProductVariant;
   quantity: number;
   totalPrice: number;
   currencyCode: string;

@@ -1,6 +1,6 @@
 export interface MagentoCategory {
-  id: number,
-  parent_id: number,
+  id: string,
+  parent_id: string,
   name: string,
   is_active: boolean,
   position: number,
