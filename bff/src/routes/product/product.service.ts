@@ -28,7 +28,6 @@ export const getProducts = async ({ categoryId, offset, limit }: {
 
   } else {
     const res = await getCTPProducts({ categoryId, offset: Number(offset), limit: Number(limit) });
-    return res;
     return transformToCustomProductsResponse(res.body);
   }
 };
@@ -43,9 +42,12 @@ export const getProduct = async (sku: string): Promise<CustomProduct | any> => {
 
     return convertProduct(magentoProduct, variantProducts.items, sku);
   } else {
-    const baseProduct = await getCTPProduct(sku);
-    console.log(baseProduct)
-    // return baseProduct
-    return convertCTPProduct(baseProduct.body.results[0], sku);
+    try {
+      const baseProduct = await getCTPProduct(sku);
+      return convertCTPProduct(baseProduct.body.results[0], sku);
+    } catch (err) {
+      console.log(err);
+      throw err;
+    }
   }
 };

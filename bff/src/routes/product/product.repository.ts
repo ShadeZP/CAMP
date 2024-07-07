@@ -71,9 +71,18 @@ export const getCTPProducts = async ({ categoryId, offset, limit }: {
 };
 
 export const getCTPProduct = async (sku: string): Promise<ClientResponse<ProductPagedQueryResponse>> => {
-  console.log(sku)
+  console.log(sku);
   try {
-    return rootClient
+    const masterProduct = rootClient
+      .products()
+      .get({
+        queryArgs: {
+          where: `masterData(current(masterVariant(sku="${sku}")))`,
+        },
+      })
+      .execute();
+
+    const variantProduct = rootClient
       .products()
       .get({
         queryArgs: {
@@ -81,10 +90,12 @@ export const getCTPProduct = async (sku: string): Promise<ClientResponse<Product
         },
       })
       .execute();
+    return Promise.all([masterProduct, variantProduct])
+      .then((responses: [ClientResponse<ProductPagedQueryResponse>, ClientResponse<ProductPagedQueryResponse>]) => responses.filter((response) => response.body.count > 0))
+      .then((filteredResponse) => filteredResponse[0]);
   } catch (err) {
     console.log(err);
     throw err;
   }
-
 };
 

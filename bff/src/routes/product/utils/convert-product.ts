@@ -108,17 +108,14 @@ export function transformToCustomProductsResponse(response: ProductPagedQueryRes
 
 export function convertCTPProduct(product: Product, sku?: string): CustomProduct {
   const { name, description, slug, masterVariant, variants } = product.masterData.current;
-
-  const currentVariant = sku ? variants.find((product) => {
-    return product.sku === sku;
-  })! : masterVariant;
+  const currentVariant = sku ? (variants.find((product) => product.sku === sku) ?? masterVariant) : masterVariant;
 
   return {
     id: product.id,
     name: name['en-US'],
     description: description?.['en-US'] ?? '',
     slug: slug['en-US'],
-    variants: product.masterData.current.variants.map((variant) => transformCTPToProductVariant(variant, name['en-US'], slug['en-US'])),
+    variants: [masterVariant, ...variants].map((variant) => transformCTPToProductVariant(variant, name['en-US'], slug['en-US'])),
     masterVariant: transformCTPToProductVariant(currentVariant, name['en-US'], slug['en-US']),
   };
 }
