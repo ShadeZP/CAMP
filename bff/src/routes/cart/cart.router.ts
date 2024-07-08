@@ -1,6 +1,6 @@
 import express, { NextFunction, Request, Response, Router } from 'express';
 import {
-  Cart,
+  CustomCart,
   AddProductToCartPayload,
   UpdateQuantityPayload,
   RemoveProductFromCartPayload, SetShippingAddressPayload,
@@ -17,7 +17,7 @@ const router: Router = express.Router();
 
 router.post('/', async function (req: Request, res: Response, next: NextFunction) {
   try {
-    const data: Cart = await createGuestCart();
+    const data: CustomCart = await createGuestCart();
 
     res.send(data);
   } catch (err) {
@@ -27,7 +27,7 @@ router.post('/', async function (req: Request, res: Response, next: NextFunction
 
 router.get('/:id', async function (req: Request, res: Response, next: NextFunction) {
   try {
-    const data: Cart = await getCartById(req.params.id);
+    const data: CustomCart = await getCartById(req.params.id);
 
     res.send(data);
   } catch (err) {

@@ -28,7 +28,7 @@ app.use('/api/v1/carts', cartRouter);
 // error handler
 app.use(function (err: Error, req: Request, res: Response, next: NextFunction): void {
   // set locals, only providing error in development
-  console.log('text', (err as any).response.data)
+  console.log('text', (err as any).response)
   res.locals.message = err.message;
   res.locals.error = req.app.get('env') === 'development' ? err : {};
 

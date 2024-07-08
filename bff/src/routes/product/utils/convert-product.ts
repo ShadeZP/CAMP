@@ -120,7 +120,7 @@ export function convertCTPProduct(product: Product, sku?: string): CustomProduct
   };
 }
 
-function transformCTPToProductVariant(variant: ProductVariant, name: string, slug: string): CustomProductVariant {
+export function transformCTPToProductVariant(variant: ProductVariant, name: string = '', slug: string = ''): CustomProductVariant {
   return {
     id: variant.id,
     sku: variant.sku ?? '',

@@ -1,11 +1,16 @@
+import { Cart, CartUpdate, ClientResponse } from '@commercetools/platform-sdk';
 import axios from 'axios';
 import https from 'https';
+import { rootClient } from '../../BuildClient';
 import {
-  MagentoProductInCart,
-  MagentoUpdateProductsInCartPayload,
-  MagentoCart,
+  AddProductToCTPCartPayload,
+  Country,
+  MagentoAddressInformationPayload,
   MagentoAddressInformationResponse,
-  MagentoAddressInformationPayload, MagentoCreateOrderPayload, Country,
+  MagentoCart,
+  MagentoCreateOrderPayload,
+  CustomProductInCart,
+  MagentoUpdateProductsInCartPayload,
 } from '../../models/Magento-cart';
 
 const instance = axios.create({
@@ -35,7 +40,7 @@ export const getCartById = async (cartId: string): Promise<MagentoCart> => {
   }
 };
 
-export const getCartItems = async (cartId: string): Promise<MagentoProductInCart[]> => {
+export const getCartItems = async (cartId: string): Promise<CustomProductInCart[]> => {
   try {
     const response = await instance.get(`https://magento.test/rest/default/V1/guest-carts/${cartId}/items`);
     return response.data;
@@ -45,7 +50,7 @@ export const getCartItems = async (cartId: string): Promise<MagentoProductInCart
   }
 };
 
-export const addProductToCart = async (body: MagentoUpdateProductsInCartPayload, cartId: string): Promise<MagentoProductInCart> => {
+export const addProductToCart = async (body: MagentoUpdateProductsInCartPayload, cartId: string): Promise<CustomProductInCart> => {
   try {
     const response = await instance.post(`https://magento.test/rest/default/V1/guest-carts/${cartId}/items`, body);
     return response.data;
@@ -55,7 +60,7 @@ export const addProductToCart = async (body: MagentoUpdateProductsInCartPayload,
   }
 };
 
-export const updateProductQuantity = async (body: MagentoUpdateProductsInCartPayload, cartId: string): Promise<MagentoProductInCart> => {
+export const updateProductQuantity = async (body: MagentoUpdateProductsInCartPayload, cartId: string): Promise<CustomProductInCart> => {
   try {
     const response = await instance.put(`https://magento.test/rest/default/V1/guest-carts/${cartId}/items/${body.cartItem.item_id}`, body);
     return response.data;
@@ -100,6 +105,50 @@ export const getCountryById = async (countryId: string): Promise<Country> => {
   try {
     const response = await instance.get(`https://magento.test/rest/default/V1/directory/countries/${countryId}`);
     return response.data;
+  } catch (err) {
+    console.error(err);
+    throw err;
+  }
+};
+
+export const createCTPGuestCart = async (): Promise<ClientResponse<Cart>> => {
+  try {
+    return rootClient
+      .carts()
+      .post({
+        body: {
+          currency: 'USD',
+        },
+      })
+      .execute();
+  } catch (err) {
+    console.error(err);
+    throw err;
+  }
+};
+
+export const getCTPCartById = async (cartId: string): Promise<ClientResponse<Cart>> => {
+  try {
+    return rootClient
+      .carts()
+      .withId({ ID: cartId })
+      .get()
+      .execute();
+  } catch (err) {
+    console.error(err);
+    throw err;
+  }
+};
+
+export const addProductToCTPCart = async (body: CartUpdate, cartId: string): Promise<ClientResponse<Cart>> => {
+  try {
+    return rootClient
+      .carts()
+      .withId({ ID: cartId })
+      .post({
+        body,
+      })
+      .execute();
   } catch (err) {
     console.error(err);
     throw err;

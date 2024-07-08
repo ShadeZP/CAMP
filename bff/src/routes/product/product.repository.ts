@@ -71,7 +71,6 @@ export const getCTPProducts = async ({ categoryId, offset, limit }: {
 };
 
 export const getCTPProduct = async (sku: string): Promise<ClientResponse<ProductPagedQueryResponse>> => {
-  console.log(sku);
   try {
     const masterProduct = rootClient
       .products()

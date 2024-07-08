@@ -1,12 +1,12 @@
 import {
-  Cart,
+  CustomCart,
   AddProductToCartPayload,
   UpdateQuantityPayload,
   RemoveProductFromCartPayload, SetShippingAddressPayload,
 } from '../../models/Cart.model';
 import {
   MagentoUpdateProductsInCartPayload,
-  MagentoProductInCart,
+  CustomProductInCart,
   MagentoAddressInformationResponse, MagentoAddressInformationPayload, MagentoCreateOrderPayload,
 } from '../../models/Magento-cart';
 import { getProduct } from '../product/product.repository';
@@ -19,43 +19,95 @@ import {
   addShippingAddress as addShippingAddressRepo,
   createOrder as createOrderRepo,
   getCountryById as getCountryByIdRepo,
+  createCTPGuestCart,
+  getCTPCartById,
+  addProductToCTPCart,
 } from './cart.repository';
 
 
 import {
   convertCart,
-  covertAddToCartPayload,
+  convertAddToCartPayload,
   convertUpdateQuantityPayload,
   mapCart,
-  convertRemoveProductFromCartPayload, convertToMagentoAddressInformationPayload,
+  convertRemoveProductFromCartPayload,
+  convertToMagentoAddressInformationPayload,
+  convertCTPCart,
+  convertToCartUpdatePayload,
 } from './utils/convert-cart';
 
-export const createGuestCart = async (): Promise<Cart> => {
-  const cartId = await createGuestCartRepo();
+const isCTP = process.env.CURRENT_BASE === 'CTP';
 
-  return convertCart(cartId);
-};
+export const createGuestCart = async (): Promise<CustomCart> => {
+  if (!isCTP) {
+    try {
+      const cartId = await createGuestCartRepo();
 
-export const getCartById = async (token: string): Promise<Cart> => {
-  try {
-    const magentoCart = await getCartByIdRepo(token);
-    const magentoProducts = await Promise.all(magentoCart.items.map((product) => getProduct(product.sku!)));
+      return convertCart(cartId);
+    } catch (err) {
+      console.error(err);
+      throw err;
+    }
+  } else {
+    try {
+      const response = await createCTPGuestCart();
 
-    return mapCart(magentoCart, token, magentoProducts);
-  } catch (err) {
-    console.log(err);
-    throw err;
+      return convertCTPCart(response.body);
+    } catch (err) {
+      console.error(err);
+      throw err;
+    }
   }
 };
 
-export const addProductToCart = async (payload: AddProductToCartPayload, cartId: string): Promise<MagentoProductInCart> => {
-  const cart = await getCartByIdRepo(cartId);
-  const body: MagentoUpdateProductsInCartPayload = covertAddToCartPayload(payload, cart);
+export const getCartById = async (token: string): Promise<CustomCart> => {
+  if (!isCTP) {
+    try {
+      const magentoCart = await getCartByIdRepo(token);
+      const magentoProducts = await Promise.all(magentoCart.items.map((product) => getProduct(product.sku!)));
 
-  return await addProductToCartRepo(body, cartId);
+      return mapCart(magentoCart, token, magentoProducts);
+    } catch (err) {
+      console.log(err);
+      throw err;
+    }
+  } else {
+    try {
+      const response = await getCTPCartById(token);
+
+      return convertCTPCart(response.body);
+    } catch (err) {
+      console.error(err);
+      throw err;
+    }
+  }
 };
 
-export const updateProductQuantity = async (payload: UpdateQuantityPayload, cartId: string): Promise<MagentoProductInCart> => {
+export const addProductToCart = async (payload: AddProductToCartPayload, cartId: string): Promise<any> => {
+  if (!isCTP) {
+    try {
+      const cart = await getCartByIdRepo(cartId);
+      const body: MagentoUpdateProductsInCartPayload = convertAddToCartPayload(payload, cart);
+
+      return await addProductToCartRepo(body, cartId);
+    } catch (err) {
+      console.error(err);
+      throw err;
+    }
+  } else {
+    try {
+      const ctpPayload = convertToCartUpdatePayload(payload);
+      const cart = await addProductToCTPCart(ctpPayload, cartId);
+      return cart;
+    } catch (err) {
+      console.error(err);
+      throw err;
+    }
+  }
+
+};
+
+export const updateProductQuantity = async (payload: UpdateQuantityPayload, cartId: string): Promise<CustomProductInCart> => {
   const cart = await getCartByIdRepo(cartId);
   const body: MagentoUpdateProductsInCartPayload = convertUpdateQuantityPayload(payload, cart);
 
@@ -68,7 +120,7 @@ export const removeProductFromCart = async (payload: RemoveProductFromCartPayloa
 
 export const addShippingAddress = async (payload: SetShippingAddressPayload, cartId: string): Promise<MagentoAddressInformationResponse> => {
   const country = await getCountryByIdRepo(payload.SetShippingAddress.country);
-  const magentoPayload: MagentoAddressInformationPayload = convertToMagentoAddressInformationPayload(payload , country);
+  const magentoPayload: MagentoAddressInformationPayload = convertToMagentoAddressInformationPayload(payload, country);
 
   return await addShippingAddressRepo(cartId, magentoPayload);
 };
