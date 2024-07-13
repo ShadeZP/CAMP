@@ -6,7 +6,7 @@ export interface MagentoCart {
   updated_at: string;
   is_active: boolean;
   is_virtual: boolean;
-  items: MagentoProductInCart[];
+  items: CustomProductInCart[];
   items_count: number;
   items_qty: number;
   customer: Customer;
@@ -67,10 +67,10 @@ export interface Shipping {
 }
 
 export interface MagentoUpdateProductsInCartPayload {
-  cartItem: MagentoProductInCart;
+  cartItem: CustomProductInCart;
 }
 
-export interface MagentoProductInCart {
+export interface CustomProductInCart {
   item_id?: number | null,
   sku?: string,
   qty: number,
@@ -329,4 +329,16 @@ export interface Country {
   full_name_english: string;
   available_regions: Region[];
   extension_attributes: any;
+}
+
+export interface AddProductToCTPCartPayload {
+  version: number,
+  actions: [
+    {
+      action: 'addLineItem',
+      productId: string, // or sku
+      variantId: number,
+      quantity: number
+    }
+  ]
 }

@@ -1,47 +1,47 @@
-export interface ProductResponse {
-  results: Product[];
+export interface CustomProductsResponse {
+  results: CustomProduct[];
   total: number;
   limit: number;
   offset: number;
 }
 
-export interface Product {
-  id: number;
+export interface CustomProduct {
+  id: string;
   name: string;
   description: string;
   slug: string;
-  variants: ProductVariant[];
-  masterVariant: ProductVariant;
+  variants: CustomProductVariant[];
+  masterVariant: CustomProductVariant;
 }
 
-export interface ProductVariantAvailability {
+export interface CustomProductVariantAvailability {
   isOnStock?: boolean;
   availableQty?: number;
 }
 
-export interface ProductVariant {
+export interface CustomProductVariant {
   id: number;
   sku: string;
   name: string;
   slug: string;
-  images: Image[];
-  prices: Price[];
-  attributes: ProductAttribute[];
-  availability?: ProductVariantAvailability;
+  images: CustomImage[];
+  prices: CustomPrice[];
+  attributes: CustomProductAttribute[];
+  availability?: CustomProductVariantAvailability;
 }
 
-export interface Price {
+export interface CustomPrice {
   value: {
     currencyCode: string;
     centAmount: number;
   };
 }
 
-export interface Image {
+export interface CustomImage {
   url: string;
 }
 
-export interface ProductAttribute {
+export interface CustomProductAttribute {
   name: string;
   value: {
     key:string;
@@ -49,6 +49,6 @@ export interface ProductAttribute {
   };
 }
 
-export interface AttributeObject {
+export interface CustomAttributeObject {
   [key: string] : string;
 }

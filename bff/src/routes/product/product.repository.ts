@@ -1,5 +1,7 @@
+import { ClientResponse, Product, ProductPagedQueryResponse } from '@commercetools/platform-sdk';
 import axios from 'axios';
 import https from 'https';
+import { rootClient } from '../../BuildClient';
 import { MagentoProduct, MagentoProductResponse } from '../../models/Magento-product.model';
 
 const instance = axios.create({
@@ -8,12 +10,12 @@ const instance = axios.create({
   }),
 });
 
-export const getProductsByIds = async (ids: string): Promise<MagentoProductResponse>  => {
+export const getProductsByIds = async (ids: string): Promise<MagentoProductResponse> => {
   const filterForVariantProducts = `searchCriteria[filterGroups][0][filters][0][field]=entity_id&searchCriteria[filterGroups][0][filters][0][value]=${ids}&searchCriteria[filterGroups][0][filters][0][conditionType]=in`;
   const urlForVariantProducts = `https://magento.test/rest/default/V1/products? + ${filterForVariantProducts}`;
   const variantProducts = await instance.get(urlForVariantProducts);
   return variantProducts.data;
-}
+};
 
 export const getProducts = async ({ categoryId, offset, limit }: {
   categoryId: string,
@@ -42,6 +44,56 @@ export const getProduct = async (sku: string): Promise<MagentoProduct> => {
     return response.data;
   } catch (err) {
     console.log('err', err);
+    throw err;
+  }
+};
+
+export const getCTPProducts = async ({ categoryId, offset, limit }: {
+  categoryId: string,
+  offset: number,
+  limit: number
+}): Promise<ClientResponse<ProductPagedQueryResponse>> => {
+  try {
+    return rootClient
+      .products()
+      .get({
+        queryArgs: {
+          where: `masterData(current(categories(id="${categoryId}")))`,
+          limit,
+          offset,
+        },
+      })
+      .execute();
+  } catch (err) {
+    console.log(err);
+    throw err;
+  }
+};
+
+export const getCTPProduct = async (sku: string): Promise<ClientResponse<ProductPagedQueryResponse>> => {
+  try {
+    const masterProduct = rootClient
+      .products()
+      .get({
+        queryArgs: {
+          where: `masterData(current(masterVariant(sku="${sku}")))`,
+        },
+      })
+      .execute();
+
+    const variantProduct = rootClient
+      .products()
+      .get({
+        queryArgs: {
+          where: `masterData(current(variants(sku="${sku}")))`,
+        },
+      })
+      .execute();
+    return Promise.all([masterProduct, variantProduct])
+      .then((responses: [ClientResponse<ProductPagedQueryResponse>, ClientResponse<ProductPagedQueryResponse>]) => responses.filter((response) => response.body.count > 0))
+      .then((filteredResponse) => filteredResponse[0]);
+  } catch (err) {
+    console.log(err);
     throw err;
   }
 };

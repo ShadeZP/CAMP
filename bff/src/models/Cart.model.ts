@@ -1,4 +1,4 @@
-import { ProductVariant } from './Product.model';
+import { CustomProductVariant } from './Product.model';
 
 export interface MagentoCreateCartResponse {
   id: string;
@@ -10,20 +10,20 @@ export interface CartTotalPrice {
 }
 
 export interface CartLineItemsInner {
-  id: number;
-  variant: ProductVariant;
+  id: number | string;
+  variant: CustomProductVariant;
   quantity: number;
   totalPrice: number;
-  currencyCode: string;
+  currencyCode?: string;
 }
 
-export interface Cart {
+export interface CustomCart {
   id: string | number;
   version?: number;
   customerId?: string;
   lineItems: CartLineItemsInner[];
   totalPrice: CartTotalPrice;
-  totalQuantity: number;
+  totalQuantity: number | undefined;
 }
 
 export type CartsIdPutRequestUpdateAction = 'AddLineItem' | 'ChangeLineItemQuantity' | 'Recalculate' | 'RemoveLineItem';
